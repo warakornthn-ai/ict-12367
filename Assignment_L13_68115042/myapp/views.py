@@ -1,0 +1,49 @@
+from django.shortcuts import render, redirect, get_object_or_404
+from .models import Person
+
+from django.db.models import Q
+
+def home(request):
+    all_person = Person.objects.all()
+
+    query = request.GET.get('q')
+
+    # 🔥 แก้ตรงนี้
+    if query and query.strip():
+        all_person = all_person.filter(
+            Q(name__icontains=query.strip())
+        )
+
+    return render(request, 'index.html', {
+        'all_person': all_person
+    })
+
+def form(request):
+    if request.method == "POST":
+        name = request.POST.get("name")
+        age = request.POST.get("age")
+
+        Person.objects.create(
+            name=name,
+            age=age
+        )
+
+        return redirect('/')
+    
+    return render(request, 'form.html')
+
+def edit(request, person_id):
+    person = get_object_or_404(Person, pk=person_id)
+
+    if request.method == "POST":
+        person.name = request.POST.get("name")
+        person.age = request.POST.get("age")
+        person.save()
+        return redirect('/')
+    
+    return render(request, 'edit.html', {'person': person})
+
+def delete(request, person_id):
+    person = get_object_or_404(Person, pk=person_id)
+    person.delete()
+    return redirect('/')

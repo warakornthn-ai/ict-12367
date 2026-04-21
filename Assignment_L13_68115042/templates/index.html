@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Assignment 13</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="container mt-5">
+
+    <!-- 🟦 หัวข้อ -->
+    <h3 class="text-primary text-center mb-4">
+        ยินดีต้อนรับเข้าสู่ประชากร
+    </h3>
+
+    <!-- 🔍 ช่องค้นหา -->
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <a href="{% url 'form' %}" class="btn btn-primary">
+                + เพิ่มข้อมูล
+            </a>
+        </div>
+
+        <div class="col-md-6">
+            <form method="GET" class="d-flex justify-content-end">
+                <input class="form-control me-2" 
+                       type="search" 
+                       name="q" 
+                       placeholder="ค้นหาชื่อประชากร..." 
+                       value="{{ request.GET.q|default:'' }}">
+
+                <button class="btn btn-outline-primary me-2" type="submit">
+                    ค้นหา
+                </button>
+
+                <a href="{% url 'home' %}" class="btn btn-outline-secondary">
+                    ล้างค่า
+                </a>
+            </form>
+        </div>
+    </div>
+
+    <!-- 📊 ตาราง -->
+    <table class="table table-hover table-bordered text-center align-middle">
+        <thead class="table-light">
+            <tr>
+                <th>รหัสประชากร</th>
+                <th>ชื่อประชากร</th>
+                <th>อายุ</th>
+                <th>วันที่เพิ่มข้อมูล</th>
+                <th>แก้ไข</th>
+                <th>ลบ</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for person in all_person %}
+            <tr>
+                <td>{{ person.id }}</td>
+                <td>{{ person.name }}</td>
+                <td>{{ person.age }}</td>
+                <td>{{ person.created_at|date:"F d, Y" }}</td>
+
+                <!-- ✏️ แก้ไข -->
+                <td>
+                    <a href="{% url 'edit' person.id %}" 
+                       class="btn text-white"
+                       style="background-color: hotpink;">
+                        แก้ไข
+                    </a>
+                </td>
+
+                <!-- 🗑 ลบ -->
+                <td>
+                    <a href="{% url 'delete' person.id %}" 
+                       onclick="return confirm('คุณแน่ใจว่าจะลบข้อมูลนี้?')" 
+                       class="btn text-white"
+                       style="background-color: orange;">
+                        ลบ
+                    </a>
+                </td>
+            </tr>
+
+            {% empty %}
+            <tr>
+                <td colspan="6" class="text-center text-muted">
+                    ไม่พบข้อมูลที่ค้นหา
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+</div>
+
+</body>
+</html>
